@@ -1,0 +1,177 @@
+import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:sensors_plus/sensors_plus.dart';
+import 'dart:async';
+import 'dart:math';
+
+void main() => runApp(MyApp());
+
+class MyApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Raw Accel Mobile',
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: MyHomePage(),
+    );
+  }
+}
+
+class Settings with ChangeNotifier {
+  double baseSensitivity = 50.0;
+  double dynamicSensitivity = 30.0;
+  double dpi = 800.0;
+  double pollingRate = 500.0;
+  double deadzone = 10.0;
+  double acceleration = 1.0;
+  bool isAdjustingSensitivity = false;
+  List<String> profiles = [];
+  String selectedProfile = "";
+  String selectedGame = "Nenhum";
+  double colorSaturation = 1.0;
+  double gyroSensitivity = 1.0;
+  double directionSensitivityX = 1.0;
+  double directionSensitivityY = 1.0;
+  double accelerationCurve = 1.0;
+  double sensitivityProfile = 1.0;
+
+  Future<void> loadSettings() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    baseSensitivity = prefs.getDouble('baseSensitivity') ?? 50.0;
+    dynamicSensitivity = prefs.getDouble('dynamicSensitivity') ?? 30.0;
+    dpi = prefs.getDouble('dpi') ?? 800.0;
+    pollingRate = prefs.getDouble('pollingRate') ?? 500.0;
+    deadzone = prefs.getDouble('deadzone') ?? 10.0;
+    acceleration = prefs.getDouble('acceleration') ?? 1.0;
+    isAdjustingSensitivity = prefs.getBool('isAdjustingSensitivity') ?? false;
+    selectedGame = prefs.getString('selectedGame') ?? "Nenhum";
+    colorSaturation = prefs.getDouble('colorSaturation') ?? 1.0;
+    gyroSensitivity = prefs.getDouble('gyroSensitivity') ?? 1.0;
+    directionSensitivityX = prefs.getDouble('directionSensitivityX') ?? 1.0;
+    directionSensitivityY = prefs.getDouble('directionSensitivityY') ?? 1.0;
+    accelerationCurve = prefs.getDouble('accelerationCurve') ?? 1.0;
+    sensitivityProfile = prefs.getDouble('sensitivityProfile') ?? 1.0;
+    profiles = prefs.getStringList('profiles') ?? [];
+    notifyListeners();
+  }
+
+  Future<void> saveSettings() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('baseSensitivity', baseSensitivity);
+    await prefs.setDouble('dynamicSensitivity', dynamicSensitivity);
+    await prefs.setDouble('dpi', dpi);
+    await prefs.setDouble('pollingRate', pollingRate);
+    await prefs.setDouble('deadzone', deadzone);
+    await prefs.setDouble('acceleration', acceleration);
+    await prefs.setBool('isAdjustingSensitivity', isAdjustingSensitivity);
+    await prefs.setString('selectedGame', selectedGame);
+    await prefs.setDouble('colorSaturation', colorSaturation);
+    await prefs.setDouble('gyroSensitivity', gyroSensitivity);
+    await prefs.setDouble('directionSensitivityX', directionSensitivityX);
+    await prefs.setDouble('directionSensitivityY', directionSensitivityY);
+    await prefs.setDouble('accelerationCurve', accelerationCurve);
+    await prefs.setDouble('sensitivityProfile', sensitivityProfile);
+    await prefs.setStringList('profiles', profiles);
+  }
+
+  Future<void> saveProfile(String profileName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble('$profileName_baseSensitivity', baseSensitivity);
+    await prefs.setDouble('$profileName_dynamicSensitivity', dynamicSensitivity);
+    await prefs.setDouble('$profileName_dpi', dpi);
+    await prefs.setDouble('$profileName_pollingRate', pollingRate);
+    await prefs.setDouble('$profileName_deadzone', deadzone);
+    await prefs.setDouble('$profileName_acceleration', acceleration);
+    await prefs.setDouble('$profileName_colorSaturation', colorSaturation);
+    await prefs.setDouble('$profileName_gyroSensitivity', gyroSensitivity);
+    await prefs.setDouble('$profileName_directionSensitivityX', directionSensitivityX);
+    await prefs.setDouble('$profileName_directionSensitivityY', directionSensitivityY);
+    await prefs.setDouble('$profileName_accelerationCurve', accelerationCurve);
+    await prefs.setDouble('$profileName_sensitivityProfile', sensitivityProfile);
+  }
+
+  Future<void> loadProfile(String profileName) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    baseSensitivity = prefs.getDouble('$profileName_baseSensitivity') ?? 50.0;
+    dynamicSensitivity = prefs.getDouble('$profileName_dynamicSensitivity') ?? 30.0;
+    dpi = prefs.getDouble('$profileName_dpi') ?? 800.0;
+    pollingRate = prefs.getDouble('$profileName_pollingRate') ?? 500.0;
+    deadzone = prefs.getDouble('$profileName_deadzone') ?? 10.0;
+    acceleration = prefs.getDouble('$profileName_acceleration') ?? 1.0;
+    colorSaturation = prefs.getDouble('$profileName_colorSaturation') ?? 1.0;
+    gyroSensitivity = prefs.getDouble('$profileName_gyroSensitivity') ?? 1.0;
+    directionSensitivityX = prefs.getDouble('$profileName_directionSensitivityX') ?? 1.0;
+    directionSensitivityY = prefs.getDouble('$profileName_directionSensitivityY') ?? 1.0;
+    accelerationCurve = prefs.getDouble('$profileName_accelerationCurve') ?? 1.0;
+    sensitivityProfile = prefs.getDouble('$profileName_sensitivityProfile') ?? 1.0;
+    notifyListeners();
+  }
+
+  void saveDefaults() {
+    baseSensitivity = 50.0;
+    dynamicSensitivity = 30.0;
+    dpi = 800.0;
+    pollingRate = 500.0;
+    deadzone = 10.0;
+    acceleration = 1.0;
+    colorSaturation = 1.0;
+    gyroSensitivity = 1.0;
+    directionSensitivityX = 1.0;
+    directionSensitivityY = 1.0;
+    accelerationCurve = 1.0;
+    sensitivityProfile = 1.0;
+    saveSettings();
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  final Settings settings = Settings();
+  double _lastUpdateTime = 0;
+  double _lastX = 0;
+  double _lastY = 0;
+  double _lastZ = 0;
+  double _smoothedGyroValue = 0;
+  double _lastAccelerometerMagnitude = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    settings.loadSettings().then((_) {
+      _startSensorUpdates();
+    });
+  }
+
+  void _startSensorUpdates() {
+    accelerometerEvents.listen((AccelerometerEvent event) {
+      _applyDeadzone(event);
+      _adjustSensitivityBasedOnAcceleration(event.x, event.y, event.z);
+    });
+
+    gyroscopeEvents.listen((GyroscopeEvent event) {
+      _applyGyroFilter(event);
+    });
+
+    magnetometerEvents.listen((MagnetometerEvent event) {
+      _adjustForMagnetometer(event);
+    });
+  }
+
+  void _applyDeadzone(AccelerometerEvent event) {
+    double magnitude = sqrt(event.x * event.x + event.y * event.y + event.z * event.z);
+    if (magnitude < settings.deadzone) {
+      event = AccelerometerEvent(0, 0, 0);  // Imutável: Crie um novo evento se necessário
+    }
+  }
+
+  void _adjustSensitivityBasedOnAcceleration(double x, double y, double z) {
+    double magnitude = sqrt(x * x + y * y + z * z);
+    double normalizedMagnitude = min(magnitude / settings.baseSensitivity, 1.0);
+
+    double adjustedX = x * settings.direction

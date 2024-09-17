@@ -174,4 +174,43 @@ class _MyHomePageState extends State<MyHomePage> {
     double magnitude = sqrt(x * x + y * y + z * z);
     double normalizedMagnitude = min(magnitude / settings.baseSensitivity, 1.0);
 
-    double adjustedX = x * settings.direction
+    double adjustedX = x * settings.directionSensitivityX * normalizedMagnitude;
+    double adjustedY = y * settings.directionSensitivityY * normalizedMagnitude;
+    double adjustedZ = z * settings.acceleration * normalizedMagnitude;
+
+    // Atualize a interface do usuário ou use esses valores conforme necessário
+    _updateUI();
+  }
+
+  void _applyGyroFilter(GyroscopeEvent event) {
+    double filteredX = event.x * settings.gyroSensitivity;
+    double filteredY = event.y * settings.gyroSensitivity;
+    double filteredZ = event.z * settings.gyroSensitivity;
+
+    // Atualize a interface do usuário ou use esses valores conforme necessário
+    _updateUI();
+  }
+
+  void _adjustForMagnetometer(MagnetometerEvent event) {
+    double adjustedX = event.x * settings.acceleration;
+    double adjustedY = event.y * settings.acceleration;
+    double adjustedZ = event.z * settings.acceleration;
+
+    // Atualize a interface do usuário ou use esses valores conforme necessário
+    _updateUI();
+  }
+
+  void _updateUI() {
+    setState(() {
+      // Atualize a interface do usuário com os novos valores
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Raw Accel Mobile'),
+      ),
+      body: Center(
+        child: Text

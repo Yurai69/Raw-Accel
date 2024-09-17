@@ -1,0 +1,18 @@
+# Raw Accel Mobile
+
+**Descrição**: O "Raw Accel Mobile" é um aplicativo Flutter que coleta e processa dados dos sensores de movimento do dispositivo, como acelerômetro e giroscópio. O aplicativo permite ajustar e salvar configurações de sensibilidade para diferentes perfis, possibilitando uma personalização detalhada para diversas necessidades de usuário.
+
+## Funcionalidades
+
+- **Ajuste de Sensibilidade**: Configure a sensibilidade base, dinâmica e outros parâmetros relevantes para o acelerômetro e giroscópio.
+- **Perfis de Configuração**: Salve e carregue perfis personalizados com configurações específicas para diferentes jogos ou aplicativos.
+- **Persistência de Configurações**: Use `SharedPreferences` para armazenar e recuperar configurações e perfis.
+- **Filtragem de Dados de Sensores**: Aplique filtros e zonas mortas para melhorar a precisão dos dados dos sensores.
+
+## Instalação
+
+Para instalar e executar o aplicativo, siga estes passos:
+
+1. Clone o repositório:
+   ```bash
+   git clone https://github.com/seu-usuario/raw-accel-mobile.git
